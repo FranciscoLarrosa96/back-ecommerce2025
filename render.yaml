@@ -9,7 +9,7 @@ services:
     plan: free
     region: oregon
     branch: main
-    repo: https://github.com/TU_USUARIO/TU_REPO
+    repo: https://github.com/FranciscoLarrosa96/back-ecommerce2025
     autoDeploy: true
     envVars:
       - key: DATABASE_URL
