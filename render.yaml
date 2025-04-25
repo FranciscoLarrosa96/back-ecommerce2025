@@ -1,0 +1,281 @@
+# render.yaml
+# Archivo para que Render levante automáticamente tu NestJS y tu base de datos PostgreSQL
+
+services:
+  - type: web
+    name: api-nest-ecommerce
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    env: node
+    plan: free
+    region: oregon
+    branch: main
+    repo: https://github.com/TU_USUARIO/TU_REPO
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromService:
+          type: psql
+          name: db-ecommerce
+          property: connectionString
+
+  - type: psql
+    name: db-ecommerce
+    plan: free
+    region: oregon
+
+---
+
+# 🧱 NestJS Proyecto Base con PostgreSQL + TypeORM (mínimo para eCommerce)
+
+# 1. Estructura de entidades iniciales:
+
+// src/entities/user.entity.ts
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  name: string;
+
+  @Column({ unique: true })
+  email: string;
+
+  @Column()
+  password: string;
+
+  @OneToMany(() => Order, order => order.user)
+  orders: Order[];
+
+  @OneToMany(() => CartItem, cartItem => cartItem.user)
+  cart: CartItem[];
+}
+
+// src/entities/product.entity.ts
+@Entity()
+export class Product {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  name: string;
+
+  @Column('decimal')
+  price: number;
+
+  @Column()
+  stock: number;
+
+  @OneToMany(() => OrderItem, item => item.product)
+  orderItems: OrderItem[];
+
+  @OneToMany(() => CartItem, cartItem => cartItem.product)
+  cartItems: CartItem[];
+}
+
+// src/entities/order.entity.ts
+@Entity()
+export class Order {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => User, user => user.orders)
+  user: User;
+
+  @OneToMany(() => OrderItem, item => item.order, { cascade: true })
+  items: OrderItem[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+}
+
+// src/entities/order-item.entity.ts
+@Entity()
+export class OrderItem {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => Order, order => order.items)
+  order: Order;
+
+  @ManyToOne(() => Product, product => product.orderItems)
+  product: Product;
+
+  @Column()
+  quantity: number;
+}
+
+// src/entities/cart-item.entity.ts
+@Entity()
+export class CartItem {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => User, user => user.cart)
+  user: User;
+
+  @ManyToOne(() => Product, product => product.cartItems)
+  product: Product;
+
+  @Column()
+  quantity: number;
+}
+
+---
+
+# 2. Configuración en src/app.module.ts:
+
+```ts
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      url: process.env.DATABASE_URL,
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true,
+    }),
+    TypeOrmModule.forFeature([User, Product, Order, OrderItem, CartItem]),
+  ],
+})
+export class AppModule {}
+```
+
+---
+
+# 3. Endpoints REST básicos (controllers + services)
+
+- **products.controller.ts**: listar, crear, actualizar, eliminar productos
+- **orders.controller.ts**: crear orden con items (estilo checkout)
+- **auth.controller.ts**: login + registro (con bcrypt)
+- **cart.controller.ts**: manejar carrito de compras
+
+---
+
+# 4. CartController extendido
+
+```ts
+@Controller('cart')
+export class CartController {
+  constructor(
+    @InjectRepository(CartItem) private cartRepo: Repository<CartItem>,
+    @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(Product) private productRepo: Repository<Product>,
+    @InjectRepository(Order) private orderRepo: Repository<Order>,
+    @InjectRepository(OrderItem) private orderItemRepo: Repository<OrderItem>
+  ) {}
+
+  @Get(':userId')
+  async getCart(@Param('userId', ParseIntPipe) userId: number) {
+    return this.cartRepo.find({ where: { user: { id: userId } }, relations: ['product'] });
+  }
+
+  @Post('add')
+  async addToCart(@Body() body: { userId: number; productId: number; quantity: number }) {
+    const user = await this.userRepo.findOneBy({ id: body.userId });
+    const product = await this.productRepo.findOneBy({ id: body.productId });
+
+    let cartItem = await this.cartRepo.findOne({ where: { user: { id: user.id }, product: { id: product.id } } });
+    if (cartItem) {
+      cartItem.quantity += body.quantity;
+    } else {
+      cartItem = this.cartRepo.create({ user, product, quantity: body.quantity });
+    }
+    return this.cartRepo.save(cartItem);
+  }
+
+  @Put(':cartItemId')
+  async updateQuantity(@Param('cartItemId', ParseIntPipe) id: number, @Body() body: { quantity: number }) {
+    const item = await this.cartRepo.findOneBy({ id });
+    if (!item) throw new NotFoundException('Item no encontrado');
+    item.quantity = body.quantity;
+    return this.cartRepo.save(item);
+  }
+
+  @Delete(':cartItemId')
+  remove(@Param('cartItemId', ParseIntPipe) cartItemId: number) {
+    return this.cartRepo.delete(cartItemId);
+  }
+
+  @Post('checkout')
+  async checkout(@Body() body: { userId: number }) {
+    const user = await this.userRepo.findOneBy({ id: body.userId });
+    const cartItems = await this.cartRepo.find({ where: { user: { id: user.id } }, relations: ['product'] });
+
+    const order = this.orderRepo.create({ user, items: [] });
+    await this.orderRepo.save(order);
+
+    for (const item of cartItems) {
+      const orderItem = this.orderItemRepo.create({ order, product: item.product, quantity: item.quantity });
+      await this.orderItemRepo.save(orderItem);
+    }
+
+    await this.cartRepo.delete({ user: { id: user.id } });
+    return { message: 'Checkout exitoso', orderId: order.id };
+  }
+}
+```
+
+---
+
+Y con eso ya tenés carrito completo: agregar, actualizar, borrar, y hacer checkout que genera orden y limpia el carrito. ¿Te armo el mail de confirmación o la notificación webhook para admin? 😏📩
+// Continuación del backend eCommerce NestJS - Confirmación por email y vista de historial
+
+// Paso 5: Agregar Nodemailer para enviar confirmación de orden
+
+// src/mail/mail.service.ts
+@Injectable()
+export class MailService {
+  private transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
+    },
+  });
+
+  async sendOrderConfirmation(to: string, orderId: number) {
+    await this.transporter.sendMail({
+      from: process.env.MAIL_USER,
+      to,
+      subject: 'Confirmación de pedido',
+      html: `<h1>¡Gracias por tu compra!</h1><p>Tu número de pedido es <b>#${orderId}</b>.</p>`
+    });
+  }
+}
+
+// Llamada desde el CartController
+await this.mailService.sendOrderConfirmation(user.email, order.id);
+
+---
+
+// Paso 6: Historial de compras del usuario
+
+@Controller('orders')
+export class OrderController {
+  constructor(@InjectRepository(Order) private orderRepo: Repository<Order>) {}
+
+  @Get('user/:userId')
+  async getOrdersByUser(@Param('userId', ParseIntPipe) userId: number) {
+    return this.orderRepo.find({
+      where: { user: { id: userId } },
+      relations: ['items', 'items.product'],
+      order: { createdAt: 'DESC' }
+    });
+  }
+}
+
+---
+
+// Variables de entorno necesarias en .env para el envío de mails
+MAIL_USER=tuemail@gmail.com
+MAIL_PASS=tu_clave_de_aplicacion
+
+---
+
+¡Y listo! Ahora con cada compra:
+- Se envía un email de confirmación al usuario
+- Se puede consultar el historial completo de pedidos
+
+¿Querés que también agregue un dashboard para admin con estadísticas básicas o tabla de pedidos?
