@@ -1,6 +1,4 @@
 # render.yaml
-# Archivo para que Render levante automáticamente tu NestJS y tu base de datos PostgreSQL
-
 services:
   - type: web
     name: api-nest-ecommerce
@@ -15,12 +13,4 @@ services:
     autoDeploy: true
     envVars:
       - key: DATABASE_URL
-        fromService:
-          type: psql
-          name: db-ecommerce
-          property: connectionString
-
-  - type: psql
-    name: db-ecommerce
-    plan: free
-    region: oregon
+        value: TU_URL_POSTGRESQL
