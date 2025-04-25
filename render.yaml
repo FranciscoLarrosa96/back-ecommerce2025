@@ -1,7 +1,7 @@
 # render.yaml
 services:
   - type: web
-    name: api-nest-ecommerce
+    name: BackendEcommerce2025
     runtime: node
     buildCommand: npm install && npm run build
     startCommand: npm run start:prod
