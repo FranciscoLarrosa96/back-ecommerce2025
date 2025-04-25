@@ -22,4 +22,7 @@ export class User {
 
   @OneToMany(() => CartItem, cart => cart.user)
   cart: CartItem[];
+
+  @Column({ default: 'cliente' }) // valor por defecto si no se define
+  role: string;
 }

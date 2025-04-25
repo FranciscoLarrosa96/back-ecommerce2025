@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne } from 'typeorm';
-import { User } from './user.entity';
+import { Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne, Column } from 'typeorm';
 import { OrderItem } from './order-item.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class Order {
@@ -15,4 +15,7 @@ export class Order {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @Column({ default: 'pendiente' })
+  status: string;
 }
