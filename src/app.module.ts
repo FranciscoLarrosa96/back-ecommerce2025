@@ -21,8 +21,11 @@ import { RolesGuard } from './auth/roles.guard';
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
-      synchronize: true, // cambiar a false en producción
+      synchronize: true, // desactivá en producción
       autoLoadEntities: true,
+      ssl: {
+        rejectUnauthorized: false, // 💥 obligatorio para Neon
+      },
     }),
     ProductModule,
     UserModule,
