@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from '../entities/product.entity';
@@ -13,20 +13,40 @@ export class ProductService {
     return this.repo.find();
   }
 
-  findOne(id: number): Promise<Product | null> {
-    return this.repo.findOneBy({ id });
+  async findOne(id: number): Promise<Product> {
+    const product = await this.repo.findOneBy({ id });
+    if (!product) {
+      throw new NotFoundException(`Producto con ID ${id} no encontrado`);
+    }
+    return product;
   }
 
-  create(data: CreateProductDto): Promise<Product> {
-    const product = this.repo.create(data);
-    return this.repo.save(product);
+  async create(data: CreateProductDto): Promise<Product> {
+    try {
+      const product = this.repo.create(data);
+      return await this.repo.save(product);
+    } catch (error) {
+      if (error.code === '23505') { // Código de error de PostgreSQL para unique constraint
+        throw new ConflictException(`Ya existe un producto con el nombre "${data.name}"`);
+      }
+      throw error;
+    }
   }
 
-  update(id: number, data: UpdateProductDto): Promise<Product> {
-    return this.repo.save({ id, ...data });
+  async update(id: number, data: UpdateProductDto): Promise<Product> {
+    const product = await this.findOne(id); // Verifica que existe
+    try {
+      return await this.repo.save({ ...product, ...data });
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException(`Ya existe un producto con el nombre "${data.name}"`);
+      }
+      throw error;
+    }
   }
 
-  delete(id: number): Promise<void> {
-    return this.repo.delete(id).then(() => {});
+  async delete(id: number): Promise<void> {
+    const product = await this.findOne(id); // Verifica que existe
+    await this.repo.delete(id);
   }
 }
