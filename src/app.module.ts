@@ -10,6 +10,9 @@ import { OrderModule } from './orders/orders.module';
 import { CartModule } from './cart/cart.module';
 import { AuthModule } from './auth/auth.module';
 import { PerfilModule } from './perfil/perfil.module';
+import { CategoryModule } from './categories/category.module';
+import { SubcategoryModule } from './subcategories/subcategory.module';
+import { BrandModule } from './brands/brand.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/roles.guard';
 
@@ -33,6 +36,9 @@ import { RolesGuard } from './auth/roles.guard';
     CartModule,
     AuthModule,
     PerfilModule,
+    CategoryModule,
+    SubcategoryModule,
+    BrandModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,0 +1,160 @@
+{
+  "categories": [
+    {
+      "name": "Periféricos"
+    },
+    {
+      "name": "Gabinetes"
+    },
+    {
+      "name": "Motherboards"
+    },
+    {
+      "name": "Microprocesadores"
+    },
+    {
+      "name": "Memorias"
+    },
+    {
+      "name": "Almacenamiento"
+    },
+    {
+      "name": "Placas de Video"
+    },
+    {
+      "name": "Monitores"
+    },
+    {
+      "name": "Fuentes"
+    },
+    {
+      "name": "Computadoras"
+    },
+    {
+      "name": "Refrigeración PC"
+    },
+    {
+      "name": "Outlet"
+    },
+    {
+      "name": "Notebooks"
+    },
+    {
+      "name": "Accesorios"
+    },
+    {
+      "name": "Conectividad"
+    },
+    {
+      "name": "Sillas"
+    },
+    {
+      "name": "Combo Actualización"
+    },
+    {
+      "name": "Impresoras"
+    },
+    {
+      "name": "Tablet"
+    },
+    {
+      "name": "Software"
+    },
+    {
+      "name": "Proyectores"
+    }
+  ],
+  "subcategories": [
+    {
+      "name": "Memorias para PC",
+      "categoryName": "Memorias"
+    },
+    {
+      "name": "SSDs Internos",
+      "categoryName": "Almacenamiento"
+    },
+    {
+      "name": "Mid Tower",
+      "categoryName": "Gabinetes"
+    },
+    {
+      "name": "Placas de Video Nvidia",
+      "categoryName": "Placas de Video"
+    },
+    {
+      "name": "AMD AM4",
+      "categoryName": "Motherboards"
+    },
+    {
+      "name": "Socket AM5",
+      "categoryName": "Motherboards"
+    },
+    {
+      "name": "Mouse",
+      "categoryName": "Periféricos"
+    },
+    {
+      "name": "Teclados",
+      "categoryName": "Periféricos"
+    },
+    {
+      "name": "Fuentes 80 Plus Bronze",
+      "categoryName": "Fuentes"
+    },
+    {
+      "name": "PC Gamer Gama Media",
+      "categoryName": "Computadoras"
+    },
+    {
+      "name": "Monitores 165hz",
+      "categoryName": "Monitores"
+    },
+    {
+      "name": "Cooler",
+      "categoryName": "Refrigeración PC"
+    },
+    {
+      "name": "Auriculares",
+      "categoryName": "Periféricos"
+    },
+    {
+      "name": "Mouse Pad",
+      "categoryName": "Periféricos"
+    }
+  ],
+  "brands": [
+    {
+      "name": "MSI"
+    },
+    {
+      "name": "Asus"
+    },
+    {
+      "name": "Gigabyte"
+    },
+    {
+      "name": "Zotac"
+    },
+    {
+      "name": "EVGA"
+    },
+    {
+      "name": "ASRock"
+    },
+    {
+      "name": "Corsair"
+    },
+    {
+      "name": "Kingston"
+    },
+    {
+      "name": "HyperX"
+    },
+    {
+      "name": "Cooler Master"
+    },
+    {
+      "name": "Thermaltake"
+    }
+  ]
+}

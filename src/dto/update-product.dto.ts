@@ -14,7 +14,7 @@ export class UpdateProductDto {
     @IsString()
     @IsOptional()
     @IsUrl({}, { message: 'La imagen debe ser una URL válida' })
-    image?: string;
+    imageUrl?: string;
 
     @IsNumber({}, { message: 'El precio debe ser un número' })
     @IsOptional()
@@ -25,5 +25,20 @@ export class UpdateProductDto {
     @IsOptional()
     @IsPositive({ message: 'El stock debe ser mayor a 0' })
     stock?: number;
-  }
+
+    @IsNumber({}, { message: 'El ID de categoría debe ser un número' })
+    @IsOptional()
+    @IsPositive({ message: 'El ID de categoría debe ser mayor a 0' })
+    categoryId?: number;
+
+    @IsNumber({}, { message: 'El ID de subcategoría debe ser un número' })
+    @IsOptional()
+    @IsPositive({ message: 'El ID de subcategoría debe ser mayor a 0' })
+    subcategoryId?: number;
+
+    @IsNumber({}, { message: 'El ID de marca debe ser un número' })
+    @IsOptional()
+    @IsPositive({ message: 'El ID de marca debe ser mayor a 0' })
+    brandId?: number;
+}
   
