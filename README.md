@@ -53,3 +53,7 @@ JWT_SECRET=tu_clave_secreta
 
 # Levantar la app
 npm run start:dev
+
+#SEED
+npx ts-node src/seeds/seed.ts
+

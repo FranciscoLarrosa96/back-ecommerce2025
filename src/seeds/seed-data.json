@@ -155,6 +155,57 @@
     },
     {
       "name": "Thermaltake"
+    },
+    {
+      "name": "Razer"
+    },
+    {
+      "name": "Logitech"
+    },
+    {
+      "name": "Dell"
+    },
+    {
+      "name": "HP"
+    },
+    {
+      "name": "Lenovo"
+    },
+    {
+      "name": "Samsung"
+    },
+    {
+      "name": "Western Digital"
+    },
+    {
+      "name": "Seagate"
+    },
+    {
+      "name": "Intel"
+    },
+    {
+      "name": "AMD"
+    },
+    {
+      "name": "Acer"
+    },
+    {
+      "name": "ViewSonic"
+    },
+    {
+      "name": "BenQ"
+    },
+    {
+      "name": "Epson"
+    },
+    {
+      "name": "Canon"
+    },
+    {
+      "name": "Microsoft"
+    },
+    {
+      "name": "Apple"
     }
   ]
 }
