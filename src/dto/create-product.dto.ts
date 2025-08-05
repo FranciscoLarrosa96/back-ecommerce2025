@@ -20,9 +20,19 @@ export class CreateProductDto {
     @IsUrl({}, { message: 'La imagen debe ser una URL válida' })
     imageUrl?: string;
 
+    @IsString()
+    @IsOptional()
+    @IsUrl({}, { message: 'La miniatura debe ser una URL válida' })
+    thumb?: string;
+
     @IsNumber({}, { message: 'El precio debe ser un número' })
     @IsPositive({ message: 'El precio debe ser mayor a 0' })
     price: number;
+
+    @IsNumber({}, { message: 'El precio original debe ser un número' })
+    @IsOptional()
+    @IsPositive({ message: 'El precio original debe ser mayor a 0' })
+    originalPrice?: number;
 
     @IsNumber({}, { message: 'El stock debe ser un número' })
     @IsPositive({ message: 'El stock debe ser mayor a 0' })

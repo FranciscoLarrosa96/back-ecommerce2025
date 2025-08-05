@@ -23,8 +23,14 @@ export class Product {
   @Column({ nullable: true })
   imageUrl: string;
 
+  @Column({ nullable: true })
+  thumb: string;
+
   @Column('decimal')
   price: number;
+
+  @Column('decimal', { nullable: true })
+  originalPrice: number;
 
   @Column()
   stock: number;
