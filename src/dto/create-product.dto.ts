@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional, IsNotEmpty, IsPositive, MinLength, IsUrl } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsNotEmpty, IsPositive, MinLength, IsUrl, IsObject } from 'class-validator';
 
 export class CreateProductDto {
     @IsString()
@@ -10,6 +10,10 @@ export class CreateProductDto {
     @IsOptional()
     @MinLength(10, { message: 'La descripción debe tener al menos 10 caracteres' })
     description?: string;
+
+    @IsObject()
+    @IsOptional()
+    specifications?: Record<string, any>;
 
     @IsString()
     @IsOptional()

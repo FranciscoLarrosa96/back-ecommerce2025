@@ -17,6 +17,9 @@ export class Product {
   @Column({ type: 'text', nullable: true })
   description: string;
 
+  @Column({ type: 'jsonb', nullable: true })
+  specifications: Record<string, any>;
+
   @Column({ nullable: true })
   imageUrl: string;
 
